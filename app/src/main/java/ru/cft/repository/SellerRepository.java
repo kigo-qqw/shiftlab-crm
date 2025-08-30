@@ -15,16 +15,16 @@ import java.util.Optional;
 @Repository
 public interface SellerRepository extends JpaRepository<Seller, Long> {
 
-    @Query(value = "SELECT s.*, sum_of_transaction_amount FROM transaction t " +
+    @Query(value = "SELECT s.*, sum(t.amount) FROM transaction t " +
             "JOIN seller s ON t.seller = s.id " +
             "WHERE t.transaction_date BETWEEN :start AND :end " +
             "GROUP BY s.id " +
-            "ORDER BY sum(t.amount) AS sum_of_transaction_amount DESC " +
+            "ORDER BY sum(t.amount) DESC " +
             "LIMIT 1",
             nativeQuery = true)
     Optional<SellerWithIncomeInternalDto> findBestSellerByPeriod(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
-    @Query(value = "SELECT s.*, sum_of_transaction_amount FROM transaction t " +
+    @Query(value = "SELECT s.* FROM transaction t " +
             "JOIN seller s ON t.seller = s.id " +
             "WHERE t.transaction_date BETWEEN :start AND :end " +
             "GROUP BY s.id " +
